@@ -1,0 +1,77 @@
+## User-> Mongo DB
+## Product -> Postgresql DB
+## Order -> Mysql DB
+services:
+  mysql:
+    container_name: mysql_container
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orderDB
+      MYSQL_USER: embarkx
+      MYSQL_PASSWORD: embarkx
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"  # MySQL available at localhost:3307 - HOST:CONTAINER)
+    networks:
+      - embarkx-ecom-container-networks
+    restart: unless-stopped
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: productDB
+      TZ: Asia/Kolkata
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Asia/Kolkata"
+    ports:
+      - "5432:5432"  # Postgres available at localhost:5432
+    networks:
+      - embarkx-ecom-container-networks
+    volumes:
+      - postgres_data:/data/postgres
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80" # pgAdmin available at http://localhost:5050
+    depends_on:
+      - postgres
+    networks:
+      - embarkx-ecom-container-networks
+    restart: unless-stopped
+
+  phpmyadmin:
+    container_name: phpmyadmin_container
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8484:80" # phpMyAdmin available at http://localhost:8081
+    depends_on:
+      - mysql
+    networks:
+      - embarkx-ecom-container-networks
+    restart: unless-stopped
+
+networks:
+  embarkx-ecom-container-networks:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  pgadmin:
+  postgres_data:

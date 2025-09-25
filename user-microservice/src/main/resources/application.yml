@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: user-microservice
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/userDB
+      database: userDB
+server:
+  port: 8082

@@ -1,0 +1,94 @@
+Steps to create image of out Spring boot application and run it as container
+dockerhub_userName = kiranphdt
+
+Creating an image
+----------------------------------------
+1.run from terminal ->mvn spring-boot:build-image "-Dspring-boot.build-image.imageName=kiranphdt/embarkx-ecommerce-application"
+2. run -> "docker login" to authenticate.
+3. Once image is created push it to docker hub , run -> "docker push <username/image-name>"
+
+Running the Spring boot docker image as container
+----------------------------------------------------
+1. Run "docker images" -> check if the image is available on the local machine.
+2. If image is not available on local machine -> "docker pull"
+3. Once you get the docker image on local -> run "docker run -p 8080:8080 kiranphdt/embarkx-ecommerce-application", this will create docker container.
+4. Once you close the terminal , the container will be closed.
+5. To run it in detach mode -> -> run "docker run -d -p 8080:8080 kiranphdt/embarkx-ecommerce-application"
+6. Once the above command is executed ,we get <container-Id> as response.
+7. run -> "docker ps" , to check if the container is up &running.
+8. To Check the logs run "docker logs <container-Id>"
+
+"docker run -d -p 8080:8080 kiranphdt/embarkx-ecommerce-application"
+docker run                    ---- Command to run anew container
+-d                            ---- run in detach mode
+-p 8080:8080                  ---- Map 8080 port inn container to 8080 port in local machine. If we hit 8080 in local, it will be routed to 8080 in container.
+kiranphdt/embarkx-ecommerce-application ---- image name
+
+
+Establishing Communication between 2 containers(Calling from 1 container to another)
+----------------------------------------------------
+1. We use Docker network to call 1 container from another.
+2. Container_1[postgresdb] -> "docker run -d --name postgresdb<nameOfContainer> postgres:14"; postgres:14 -> imageName:version
+3. Container_2[pgadmin] -> "docker run -d --name pgadmin<nameOfContainer> dpage/pgadmin4";dpage/pgadmin4 -> imageName
+4. Now we need to establish communication between Container_1 & Container_2
+5. Run -> "docker exec -it pgadmin ping postgresdb"; pgadmin is trying to ping postgresdb container.
+6. Error -> ping: bad address 'postgresdb'
+7. We cannot access 1 container from another
+8. To avoid this we use DOcker network.
+
+9. Delete all existing network , run "docker network prune".
+10. create new network, run-> "docker network create my-network"
+11. Remove old containers , run -> "docker rm -f postgresdb pgadmin"
+12. Container_1[postgresdb] -> "docker run -d --name postgresdb<nameOfContainer> --network my-network postgres:14"; postgres:14 -> imageName:version
+13. Container_2[pgadmin] -> "docker run -d --name pgadmin<nameOfContainer> --network my-network dpage/pgadmin4";dpage/pgadmin4 -> imageName
+14.  Run -> "docker exec -it pgadmin ping postgresdb"; pgadmin is trying to ping postgresdb container.
+15. Successful ping
+
+
+// Docker PostrgesSQL and PGadmin
+1. Create a docker-compose.yml file.
+2. run -> docker-compose.yml -d
+3. Check in Docker desktop , if both containers ar running.
+
+docker pull <image-name> // pull image from docker hub
+
+docker push <username/image-name> // push image to docker hub
+
+// run docker container from the image
+docker run -it -d -p <host-port>:<container-port>
+--name <name> <image>
+
+//stop runningcontainer
+docker stop <container-id/container-name>
+
+//start a container
+docker start <container-id/container-name>
+
+//Remove a stopped container
+docker rm <container-id/container-name>
+
+// Remove image from local storage
+docker rmi <image-id/image-name>
+
+// Get all the running docker containers
+docker ps
+
+// Show all containers that are stopped & running
+docker ps -a
+
+// List all images in the host
+docker images
+
+// Access the running container from terminal
+docker exec -t <container-name/container-id> bash
+
+// Bild image from docker file
+docker build -t <username/image> .
+
+// used to get teh logs that is running
+docker logs <container-name/container-id>
+
+//Detailed information of a particular container
+docker inspect <container-name/container-id>
+
+
