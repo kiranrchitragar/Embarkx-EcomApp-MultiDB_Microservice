@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: user-microservice
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/userDB
+      database: userDB
+server:
+  port: 8082
+
+## this property is just to demo for @ConfigurationProperties
+build:
+  id: 001
+  name: Build_EComm

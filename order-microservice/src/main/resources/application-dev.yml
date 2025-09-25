@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: order-microservice
+  datasource:
+    url: jdbc:mysql://localhost:3307/orderDB
+    username: embarkx
+    password: embarkx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+server:
+  port: 8083
+
+## this property is just to demo for @ConfigurationProperties
+build:
+  id: 001
+  name: Build_EComm
+
+

@@ -1,4 +1,4 @@
-package com.ecommerce.user.cofiguration;
+package com.ecommerce.user.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

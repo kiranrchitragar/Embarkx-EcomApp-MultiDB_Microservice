@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: product-microservice
+  datasource:
+    url: jdbc:postgresql://localhost:5432/productDB?currentSchema=public&TimeZone=Asia/Kolkata
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8081
+
+## this property is just to demo for @ConfigurationProperties
+build:
+  id: 001
+  name: Build_EComm
