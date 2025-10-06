@@ -53,8 +53,10 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Product>> findUserById(@PathVariable Long id) {
-        return new ResponseEntity<>(productService.findProductById(id), HttpStatus.OK);
+    public ResponseEntity<Product> findProductById(@PathVariable Long id) {
+        return productService.findProductById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
     }
 
     @PostMapping("/createProduct")

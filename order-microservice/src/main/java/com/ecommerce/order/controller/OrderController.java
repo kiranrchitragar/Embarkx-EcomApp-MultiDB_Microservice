@@ -1,7 +1,7 @@
-package com.ecommerce.order_microservice.controller;
+package com.ecommerce.order.controller;
 
-import com.ecommerce.order_microservice.entities.Order;
-import com.ecommerce.order_microservice.service.OrderService;
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class OrderController {
 
     @PostMapping("/createOrder")
     public ResponseEntity<Order> createOrder(
-            @RequestHeader("X-User-ID") Long userId){
+            @RequestHeader("X-User-ID") String userId){
         System.out.println("To Enable to refresh Scope : run -> " +
                 "POST -> https://localhost:<port_no>/actuator/refresh");
         System.out.println("refreshScopeTestValue:: " + refreshScopeTestValue);

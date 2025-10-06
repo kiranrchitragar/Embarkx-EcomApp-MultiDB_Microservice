@@ -1,11 +1,11 @@
-package com.ecommerce.order_microservice.service;
+package com.ecommerce.order.service;
 
 
-import com.ecommerce.order_microservice.entities.CartItem;
-import com.ecommerce.order_microservice.entities.Order;
-import com.ecommerce.order_microservice.entities.OrderItem;
-import com.ecommerce.order_microservice.entities.OrderStatus;
-import com.ecommerce.order_microservice.repository.OrderRepository;
+import com.ecommerce.order.entities.CartItem;
+import com.ecommerce.order.entities.Order;
+import com.ecommerce.order.entities.OrderItem;
+import com.ecommerce.order.entities.OrderStatus;
+import com.ecommerce.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,9 +23,9 @@ public class OrderService {
         this.cartItemService = cartItemService;
     }
 
-    public Optional<Order> createOrder(Long userId) {
+    public Optional<Order> createOrder(String userId) {
         // validate for cart items, user should have items in cart
-        List<CartItem> cartItems = cartItemService.getCartItemsForUser(Long.valueOf(userId));
+        List<CartItem> cartItems = cartItemService.getCartItemsForUser(userId);
         if (cartItems.isEmpty()) {
             return Optional.empty();
         }
@@ -63,7 +63,7 @@ public class OrderService {
 
         // ------------------ Clear the cart, once order is placed.------------------
         System.out.println("orderResponse:: " + orderResponse);
-        cartItemService.clearCart(Long.valueOf(userId));
+        cartItemService.clearCart(userId);
         return Optional.of(orderResponse);
     }
 }

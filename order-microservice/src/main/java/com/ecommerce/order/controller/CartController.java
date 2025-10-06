@@ -1,9 +1,11 @@
-package com.ecommerce.order_microservice.controller;
+package com.ecommerce.order.controller;
 
 
-import com.ecommerce.order_microservice.dto.CartItemRequest;
-import com.ecommerce.order_microservice.entities.CartItem;
-import com.ecommerce.order_microservice.service.CartItemService;
+import com.ecommerce.order.dto.CartItemRequest;
+import com.ecommerce.order.dto.ProductResponse;
+import com.ecommerce.order.entities.CartItem;
+import com.ecommerce.order.restClient.ProductServiceClient;
+import com.ecommerce.order.service.CartItemService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/cart")
@@ -28,7 +31,7 @@ public class CartController {
 
     @PostMapping("/addToCart")
     public ResponseEntity<String> addToCart(
-            @RequestHeader("X-User-ID") Long userId,
+            @RequestHeader("X-User-ID") String userId,
             @RequestBody CartItemRequest cartItemRequest) {
         if (!cartItemService.addToCart(userId, cartItemRequest)) {
             return ResponseEntity.badRequest().body("Product Out of stock or User not found or Product not found");
@@ -38,7 +41,7 @@ public class CartController {
 
     @DeleteMapping("/items/{productId}")
     public ResponseEntity<String> removeFromCart(
-            @RequestHeader("X-User-ID") Long userId,
+            @RequestHeader("X-User-ID") String userId,
             @PathVariable Long productId) {
 
         boolean removedFromCart = cartItemService.deleteItemFromCart(userId, productId);
@@ -49,7 +52,7 @@ public class CartController {
 
     @GetMapping("/items")
     public ResponseEntity<List<CartItem>> getCartItemsForUser(
-            @RequestHeader("X-User-ID") Long userId) {
+            @RequestHeader("X-User-ID") String userId) {
         System.out.println("To Enable to refresh Scope : run -> " +
                 "POST -> https://localhost:<port_no>/actuator/refresh");
         System.out.println("refreshScopeTestValue:: " + refreshScopeTestValue);

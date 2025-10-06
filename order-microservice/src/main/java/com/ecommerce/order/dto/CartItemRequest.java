@@ -1,4 +1,4 @@
-package com.ecommerce.order_microservice.dto;
+package com.ecommerce.order.dto;
 
 import lombok.Data;
 

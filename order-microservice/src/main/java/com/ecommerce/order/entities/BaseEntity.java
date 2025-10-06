@@ -1,6 +1,6 @@
-package com.ecommerce.order_microservice.entities;
+package com.ecommerce.order.entities;
 
-import com.ecommerce.order_microservice.helpers.AuditListner;
+import com.ecommerce.order.helpers.AuditListner;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

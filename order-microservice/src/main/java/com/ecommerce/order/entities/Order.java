@@ -1,8 +1,7 @@
-package com.ecommerce.order_microservice.entities;
+package com.ecommerce.order.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -17,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Order extends BaseEntity{
 
-    private Long userId;
+    private String userId;
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)

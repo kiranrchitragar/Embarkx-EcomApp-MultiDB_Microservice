@@ -1,6 +1,6 @@
-package com.ecommerce.order_microservice.helpers;
+package com.ecommerce.order.helpers;
 
-import com.ecommerce.order_microservice.entities.BaseEntity;
+import com.ecommerce.order.entities.BaseEntity;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 

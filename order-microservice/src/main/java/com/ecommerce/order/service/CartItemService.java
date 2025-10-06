@@ -1,29 +1,48 @@
-package com.ecommerce.order_microservice.service;
+package com.ecommerce.order.service;
 
-import com.ecommerce.order_microservice.dto.CartItemRequest;
-import com.ecommerce.order_microservice.entities.CartItem;
-import com.ecommerce.order_microservice.repository.CartItemRepository;
+import com.ecommerce.order.dto.CartItemRequest;
+import com.ecommerce.order.dto.ProductResponse;
+import com.ecommerce.order.dto.UserResponse;
+import com.ecommerce.order.entities.CartItem;
+import com.ecommerce.order.repository.CartItemRepository;
+import com.ecommerce.order.restClient.ProductServiceClient;
+import com.ecommerce.order.restClient.UserServiceClient;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class CartItemService {
 
-    //private final ProductRepository productRepository;
-    // private final UsersRepository usersRepository;
+    private final UserServiceClient userServiceClient;
     private final CartItemRepository cartItemRepository;
+    private final ProductServiceClient productServiceClient;
 
-    public CartItemService(CartItemRepository cartItemRepository) {
+    public CartItemService(UserServiceClient userServiceClient, CartItemRepository cartItemRepository, ProductServiceClient productServiceClient) {
+        this.userServiceClient = userServiceClient;
         this.cartItemRepository = cartItemRepository;
+        this.productServiceClient = productServiceClient;
     }
 
-    public boolean addToCart(Long userId, CartItemRequest cartItemRequest) {
+    public boolean addToCart(String userId, CartItemRequest cartItemRequest) {
 
+        // Validate for product id - Call Product Microservice
+        ProductResponse productResponse = productServiceClient.getProductDetailsById(cartItemRequest.getProductId());
+        if(productResponse ==null){
+            return false;
+        }
+        if(productResponse.getStockQuantity() < cartItemRequest.getQuantity()){
+            return false;
+        }
+
+        // Validate user
+        UserResponse userResponse = userServiceClient.getUserDetailsById(String.valueOf(userId));
+        if(userResponse ==null){
+            return false;
+        }
         CartItem existingCartItem = cartItemRepository.findByUserIdAndProductId(userId,cartItemRequest.getProductId());
         if(existingCartItem!=null){
             //update the quantity, product already exists in cart , so we update the quantity
@@ -44,7 +63,7 @@ public class CartItemService {
         return true;
     }
 
-    public boolean deleteItemFromCart(Long userId, Long productId) {
+    public boolean deleteItemFromCart(String userId, Long productId) {
 
         CartItem cartItem = cartItemRepository.findByUserIdAndProductId(userId,productId);
        if(cartItem!=null){
@@ -54,11 +73,11 @@ public class CartItemService {
         return false;
     }
 
-    public List<CartItem> getCartItemsForUser(Long userId) {
+    public List<CartItem> getCartItemsForUser(String userId) {
         return cartItemRepository.findByUserId(userId);
     }
 
-    public void clearCart(Long userId) {
+    public void clearCart(String userId) {
         cartItemRepository.deleteByUserId(userId);
     }
 }

@@ -1,6 +1,5 @@
-package com.ecommerce.order_microservice.configuration;
+package com.ecommerce.order.configuration;
 
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

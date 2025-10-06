@@ -25,7 +25,7 @@ public class ProductService {
     }
 
     public Optional<Product> findProductById(Long id) {
-        return productRepository.findById(id);
+        return productRepository.findByIdAndActiveTrue(id);
     }
 
     public Optional<Product> updateProduct(Long id, Product reqProduct) {

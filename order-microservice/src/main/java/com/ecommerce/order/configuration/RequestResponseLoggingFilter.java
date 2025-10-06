@@ -1,4 +1,4 @@
-package com.ecommerce.order_microservice.configuration;
+package com.ecommerce.order.configuration;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.ecommerce.order_microservice.configuration;
+package com.ecommerce.order.configuration;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
