@@ -15,5 +15,6 @@ Grafana Loki Integration
 4. Do docker-compose down then docker-compose up -d, this will restart the docker. Restart ll the microservice as well. 
 5. Access this http://localhost:3000/?orgId=1&from=now-6h&to=now&timezone=browser -> Menu-> Explore -> Loki.
 6. File-name -> /logs-parent/order-microservice.logs
+7. Access the Grafana Loki dashboard at : http://localhost:3000. 
 
 
