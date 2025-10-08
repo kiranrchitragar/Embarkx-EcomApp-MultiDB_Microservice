@@ -1,0 +1,14 @@
+1. Add Zipkin image details in docker-compose.yml.
+2. Add dependency : micrometer-tracing-bridge-brave and zipkin-reporter-brave in all microservice. 
+3. Add management.tracing.sampling.probability: 1.0 ## ALl the request are traced, 1.0=100%
+4. Restart the services
+5. Now in restClientConfig.Java make the necessary changes to reflect the number of microservices it heads. 
+6. Now restart the Microservices and docker-compose. 
+7. Do a /addToCart, and we can see the request flow from varios microservices with traceId and span Id.
+8. Zipkin dashboard-> http://localhost:9411/zipkin
+
+--------------------- Adding this Zipkin data to Grafana as source to view ----------------------
+1. Open Grafana - localhost:3000
+2. Keep the zipkin container and Grafana container on same network.
+3. In Grafana dashboard -> Add new Datasource -> ZipKin -> Add zipkinurl -> http://zipkin:9411 [dont use localhost here, use zipkin as its container name]
+4. 
