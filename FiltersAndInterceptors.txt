@@ -1,8 +1,0 @@
-While both filters and interceptors can intercept requests, they operate at different levels.
-
-Filters are part of the Servlet API and intercept requests before they reach the Spring
-DispatcherServlet, providing a lower-level interception point.
-
-Interceptors, on the other hand, are part of the Spring MVC framework and intercept requests after
-the DispatcherServlet but before the controller method is invoked, offering more fine-grained
-control within the Spring MVC context.

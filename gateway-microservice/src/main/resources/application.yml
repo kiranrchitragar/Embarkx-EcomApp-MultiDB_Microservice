@@ -5,7 +5,7 @@
 ## profile.active is read from here to read the environment specific file.
 spring:
   application:
-    name: eureka-microservice
+    name: gateway-microservice
   profiles:
     active: dev
   config:
