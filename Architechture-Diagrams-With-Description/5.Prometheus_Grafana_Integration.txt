@@ -1,0 +1,18 @@
+1. Microservice exposes the metrics to Promethus through actuator endpoints. http://localhost:8081/actuator/metrics
+2. Add dependency of Actuator, Prometheus
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+3. Expose all endpoints from actuators in yml files
+	management.endpoints.web.exposure.include="*"
+4. Add prometheusdocker command in docoker-compose.	
+5. Create evaluate-prometheus
+	datasources.yaml - file that tells grafana where to fetch data from. like from Loki
+	prometheus.yaml - tells how prometheus creates metrics from different microservices
+
+6. Prometheus reads the endpoint mentioned in promethesu.yml through actuator	
+	http://localhost:8081/actuator/prometheus
+	
+7. Access prometheus dashboard from http://localhost:9090/graph. 
+	localhost:8081/actuators/metrics -> get the key to search in prometheus dashboard. 
+	
+8. Create Dashboard from template for visualization purpose. 
