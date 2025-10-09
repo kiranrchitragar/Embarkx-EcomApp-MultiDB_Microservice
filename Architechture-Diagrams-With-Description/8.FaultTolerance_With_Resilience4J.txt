@@ -1,0 +1,62 @@
+Techniques to recover from fault
+
+1. Retries
+2. Rate Limiting 	- Controls the number of requests the microservice can handle within a time frame. Prevents overload.
+3. Bulheads		 	- Isolating different parts of application, so issue in 1 component doesnt affect other components.
+4. Circuit Breaker	- Monitor Health of microservice, When request arrives at the faulty microservice, its redirected to fallback service or fallback response is sent back.
+5. Fallbacks		- Alternate mechnisms which is invoked if primary service is failed.
+6. Timeout 			- If Reponse is not sent within specified time, then user can take desired action, like retry, refresh.
+
+
+Modules of Resilience4J
+	1. Retry
+	2. RateLimiter
+	3. BulkHead
+	4. CircuitBreaker
+
+
+Working of Circuit breaker in our ecomm application - Method level Cirtuit breaker, only when the method is down or not responding
+1. Add dependency of resilience4J and actuator in pom.xml
+2. Update application.yml with properties as mentioned in application.
+3. Annotate the method with @Circuitbreaker , "/addToCart" in CartItemService.Java
+4. As this method has dependency on user and product microservice. Shutdown user-microservice.
+5. Restart order-microservice.
+6. Hit Multiple times.
+7 Got to -> http://localhost:8083/actuators/health
+"components": {
+    "circuitBreakers": {
+      "status": "UP",
+      "details": {
+        "productService": {
+          "status": "UP",
+          "details": {
+            "failureRate": "-1.0%",
+            "failureRateThreshold": "50.0%",
+            "slowCallRate": "-1.0%",
+            "slowCallRateThreshold": "100.0%",
+            "bufferedCalls": 0,
+            "slowCalls": 0,
+            "slowFailedCalls": 0,
+            "failedCalls": 0,
+            "notPermittedCalls": 0,
+            "state": "CLOSED"
+          }
+        }
+      }
+    },
+
+8. Hit the srvice multiple times and we can see the results in the above metrics.
+9. @CircuitBreaker(name="productService", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
+10. addToCartFallBackMechanism() the is a fallback method, we call when the circuit is open.
+
+Handle the CircuitBreaker at gateway level so it will not reach the down service. - Application level Cirtuit breaker, only when the entire application is down or not responding
+1. Add dependency in gateway-microservice
+	<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-circuitbreaker-reactor-resilience4j -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+    <version>3.3.0</version>
+</dependency>
+2. Add configurations in yml file of gateway-microservice.
+3. Add filters in GatewayConfig.Java to handle circuitBreaker.
+4. Stop the product-microservice and hit the getAllProducts. It should the fall back error message.

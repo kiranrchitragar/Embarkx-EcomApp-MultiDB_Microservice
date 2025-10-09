@@ -7,6 +7,7 @@ import com.ecommerce.order.entities.CartItem;
 import com.ecommerce.order.repository.CartItemRepository;
 import com.ecommerce.order.restClient.ProductServiceClient;
 import com.ecommerce.order.restClient.UserServiceClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,14 @@ public class CartItemService {
         this.productServiceClient = productServiceClient;
     }
 
+    public boolean addToCartFallBackMechanism(String userId,
+                                              CartItemRequest cartItemRequest,
+                                              Exception exception){
+        System.out.println("Fall Back Called");
+        exception.printStackTrace();
+        return false;
+    }
+    @CircuitBreaker(name="productService", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
     public boolean addToCart(String userId, CartItemRequest cartItemRequest) {
 
         // Validate for product id - Call Product Microservice
