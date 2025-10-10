@@ -13,3 +13,5 @@ spring:
     # If cloud-config-server is down it takes the properties from
     # local mentioned files in the project, based on profiles.active
     # import: optional:cloud-config-server:http//localhost:8888
+app:
+  message: "Hello, Order Service"

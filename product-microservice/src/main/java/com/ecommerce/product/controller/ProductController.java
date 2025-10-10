@@ -25,6 +25,15 @@ public class ProductController {
         this.refreshScopeTestValue = refreshScopeTestValue;
     }
 
+    // SImulate Retry mechnism at gateway level
+    @GetMapping("/simulate")
+    public ResponseEntity<String> simulateFailure(@RequestParam(defaultValue = "false") boolean fail){
+    if(fail){
+        throw new RuntimeException("Simulated Failure for Testing..");
+        }
+    return ResponseEntity.ok("Product service is ok");
+    }
+
     @GetMapping("/allProducts")
     public ResponseEntity<List<Product>> getAllUserDetails() {
         System.out.println("To Enable to refresh Scope : run -> " +

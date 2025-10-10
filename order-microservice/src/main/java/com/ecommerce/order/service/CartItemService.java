@@ -8,6 +8,7 @@ import com.ecommerce.order.repository.CartItemRepository;
 import com.ecommerce.order.restClient.ProductServiceClient;
 import com.ecommerce.order.restClient.UserServiceClient;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +36,21 @@ public class CartItemService {
         exception.printStackTrace();
         return false;
     }
-    @CircuitBreaker(name="productService", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
-    public boolean addToCart(String userId, CartItemRequest cartItemRequest) {
 
+    /*
+       @CircuitBreaker(name="productService", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
+     * The above line is for circuit Breaker
+     * See yml files for configuration value;
+     * */
+
+    /*
+    * The next2 lines are for Retry mechanism,
+    * See yml files for configuration value;
+    * */
+    int attempt = 0;
+    @Retry(name="retryBreaker", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
+    public boolean addToCart(String userId, CartItemRequest cartItemRequest) {
+        System.out.println("Attempt:: " + ++attempt);
         // Validate for product id - Call Product Microservice
         ProductResponse productResponse = productServiceClient.getProductDetailsById(cartItemRequest.getProductId());
         if(productResponse ==null){

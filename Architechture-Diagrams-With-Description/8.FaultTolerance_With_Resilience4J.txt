@@ -14,7 +14,7 @@ Modules of Resilience4J
 	3. BulkHead
 	4. CircuitBreaker
 
-
+------------------ Circuit Breaker--------------------------
 Working of Circuit breaker in our ecomm application - Method level Cirtuit breaker, only when the method is down or not responding
 1. Add dependency of resilience4J and actuator in pom.xml
 2. Update application.yml with properties as mentioned in application.
@@ -47,6 +47,7 @@ Working of Circuit breaker in our ecomm application - Method level Cirtuit break
 
 8. Hit the srvice multiple times and we can see the results in the above metrics.
 9. @CircuitBreaker(name="productService", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
+    public boolean addToCart(String userId, CartItemRequest cartItemRequest) -> CartItemService.Java
 10. addToCartFallBackMechanism() the is a fallback method, we call when the circuit is open.
 
 Handle the CircuitBreaker at gateway level so it will not reach the down service. - Application level Cirtuit breaker, only when the entire application is down or not responding
@@ -60,3 +61,57 @@ Handle the CircuitBreaker at gateway level so it will not reach the down service
 2. Add configurations in yml file of gateway-microservice.
 3. Add filters in GatewayConfig.Java to handle circuitBreaker.
 4. Stop the product-microservice and hit the getAllProducts. It should the fall back error message.
+
+------------------ Retry Pattern --------------------------
+Retries are used for temporary failures like bad network, service overload. Not used for permanent failures ex: DB is down.
+Retry Mechanism at method level
+1. Add @Retry at method level
+           int attempt = 0;
+           @Retry(name="productService", fallbackMethod = "addToCartFallBackMechanism") // this name is same as in configuration file.
+           public boolean addToCart(String userId, CartItemRequest cartItemRequest) {
+           }
+
+2. Add   properties in order-microservice.yml
+        retry:
+           instances:
+             retryBreaker:
+               maxAttempts: 5
+               waitDuration: 5s
+
+3. Shut down product-microservice and call /addToCart
+    Logs: Attempt:: 9
+          2025-10-10T16:06:33.648+05:30  WARN 24384 --- [order-microservice] [nio-8083-exec-2] [68e8e19d216e90b73d31789c50d1c1cb-b43bb9d056273707] o.s.c.l.core.RoundRobinLoadBalancer
+          : No servers available for service: product-microservice
+
+
+ Retry mechanism at Gateway level
+ If product service is down, gateway wont connect
+ 1. Gateway asked the eureka to give the instance of product , if eureka sees that product is down,
+ it wont return the product instance.
+ 2. See ProductController.java -> simulateFailure() method.
+ 3. http://localhost:8080/api/v1/product/simulate?fail=true -> run this to simulate failure.
+ 4. Update GatewayConfig.Java for retry mechanism.
+ 5. Restart the application.
+
+
+------------------ Rate Limiting --------------------------
+Its a technique for limiting network traffic, stops overloading the network. Prevents too many requests buzzing the service.
+Its sets the limit , as how many request the service can take
+
+1. Create a /message endpoint in order-mircoservice. -> MessageController.Java
+2. Using jmeter hit this end point multiple times -
+3. In order-service.yml
+     ratelimiter:
+        instances:
+          rateBreaker:
+            timeout-duration: 0
+            limit-refresh-period: 4s # Counter period time, means in 4seconds only 2 calls are allowed.
+            limit-for-period: 2
+
+ 4. Check once MessageController.Java
+ 5. Set 10 threads to 10 in JMeter and run it.
+ 6. First 2 requests get us "All is Well", From 3rd request we get response from call back.
+
+
+ Rate Limting at gateway Level
+ Too much complex. It used redis to implement .
