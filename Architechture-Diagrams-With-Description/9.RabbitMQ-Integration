@@ -1,0 +1,34 @@
+1. Add <artifactId>spring-boot-starter-amqp</artifactId> dependency in order-microservice.
+2.   Add this configuration in order-microservice.yml
+	rabbitmq:
+		host: localhost
+		port: 5672
+		username: guest
+		password: guest
+
+	- Order service should know how to find Queue
+
+3. Add these RabbitMQ properties in order-microservice.ymml
+	# RAbbit MQ properties
+rabbitmq:
+  exchange:
+    name: order.exchange
+  queue:
+    name: order.queue
+  routing:
+    key: order.tracking
+
+4. Add RabbitMqConfiguration.java -This file wors as - setting up queue - exchange, binding it together, autoregistering @startup, Enabling the java objects as json and preparing Rabbitemplate to send messages.
+5. Restart all services and docker-compose, and check - http://localhost:15672, -> Exchange -> "order.exchange".
+
+6. Now we modify our OrderService.java, so once the order is placed, it sends an message to RabbitMQ-> Notification service.
+
+7. Create notification-miroservice -
+8. @Service
+   public class OrderEventConsumer {
+       // this can be read from yml file
+       @RabbitListener(queues = "order.queue")
+       public void handleOrderEvent(OrderCreatedEvent orderCreatedEvent){
+           System.out.println("Received Order Event : " + orderCreatedEvent.toString());
+       }
+   }

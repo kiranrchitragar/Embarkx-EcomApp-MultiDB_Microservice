@@ -67,6 +67,19 @@ services:
       - embarkx-ecom-container-networks
     restart: unless-stopped
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"   # RabbitMQ Message Broker
+      - "15672:15672" # RabbitMQ Management UI (http://localhost:15672)
+    networks:
+      - embarkx-ecom-container-networks
+    restart: unless-stopped
+
 networks:
   embarkx-ecom-container-networks:
     driver: bridge
@@ -75,3 +88,4 @@ volumes:
   mysql_data:
   pgadmin:
   postgres_data:
+  rabbitmq_data:
